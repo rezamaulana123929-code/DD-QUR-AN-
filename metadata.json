@@ -1,0 +1,6 @@
+{
+  "name": "DD Qur'an",
+  "description": "Aplikasi Al-Qur'an digital premium dengan mushaf, terjemahan Kemenag, audio murottal, tafsir, bookmark, auto-scroll tilawah, dan pencarian global.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
