@@ -1,0 +1,22 @@
+{
+  "name": "DD Qur'an — Premium Digital Al-Qur'an",
+  "short_name": "DD Qur'an",
+  "description": "Teman Ibadah, Setiap Hari. Al-Qur'an Digital dengan Terjemahan Kemenag, Audio Murottal, Tafsir, Arah Kiblat, Jadwal Sholat, dan Kalender Hijriah.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#064E3B",
+  "theme_color": "#064E3B",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/aistudio/file_000000001f748211b0822293f6219ddd_ae0cdb83.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/aistudio/file_000000001f748211b0822293f6219ddd_ae0cdb83.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "dd-quran",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DD Qur'an — Premium Digital Al-Qur'an PWA (Aplikasi Al-Qur'an Digital)",
+  "scripts": {
+    "build": "echo 'Build complete - Static assets ready'",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "quran",
+    "al-quran",
+    "islam",
+    "jadwal-sholat",
+    "arah-kiblat",
+    "pwa"
+  ],
+  "author": "DD Qur'an Team"
+}

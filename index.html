@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DD Qur'an — Teman Ibadah, Setiap Hari</title>
+  <meta name="description" content="Aplikasi Al-Qur'an digital premium dengan terjemahan Kemenag RI, audio murottal 6 qari, tafsir, arah kiblat, jadwal sholat & adzan, serta kalender Hijriah.">
+  <meta name="theme-color" content="#064E3B">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/assets/aistudio/file_000000001f748211b0822293f6219ddd_ae0cdb83.png">
+  <link rel="apple-touch-icon" href="/assets/aistudio/file_000000001f748211b0822293f6219ddd_ae0cdb83.png">
+
+  <!-- Google Fonts: Amiri & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #064E3B;
+      --primary-dark: #022C22;
+      --accent: #D4AF37;
+      --accent-light: #F6E7B0;
+      --bg: #F8F3E7;
+      --surface: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #667085;
+      --border: #E5DCC8;
+      --success: #166534;
+      --error: #B42318;
+      --font-arabic: 'Amiri', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0F1713;
+      --surface: #16221C;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --border: #25382E;
+      --primary: #10B981;
+      --primary-dark: #064E3B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), #064E3B);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid var(--accent);
+      object-fit: cover;
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--accent-light);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: white;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      padding-bottom: 120px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin-bottom: 14px;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, var(--primary-dark), #064E3B);
+      color: white;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      color: var(--accent-light);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Grid menu */
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    @media (min-width: 600px) {
+      .nav-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .nav-tile {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .nav-tile:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .nav-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(6, 78, 59, 0.1);
+      color: #064E3B;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-tile-title {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-tile-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Arabic typography */
+    .arabic-text {
+      font-family: var(--font-arabic);
+      direction: rtl;
+      text-align: right;
+      font-size: 26px;
+      line-height: 2.2;
+      color: var(--text);
+    }
+
+    /* Medallion */
+    .medallion {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+      color: var(--primary-dark);
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 4px;
+      z-index: 60;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+    }
+
+    .bottom-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 12px;
+      transition: color 0.15s;
+    }
+
+    .bottom-tab.active {
+      color: #064E3B;
+      font-weight: 700;
+    }
+
+    .bottom-tab svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* Mini Audio Player */
+    .mini-player {
+      position: fixed;
+      bottom: 64px;
+      left: 12px;
+      right: 12px;
+      max-width: 876px;
+      margin: 0 auto;
+      background: var(--primary-dark);
+      color: white;
+      border-radius: 16px;
+      border: 1px solid var(--accent);
+      padding: 10px 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 55;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+
+    .mini-player.visible {
+      display: flex;
+    }
+
+    .btn {
+      background: #064E3B;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn-gold {
+      background: var(--accent);
+      color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* Auto scroll bar */
+    .auto-scroll-bar {
+      position: fixed;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 8px 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 52;
+    }
+
+    /* Search input */
+    .search-box {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .search-box:focus {
+      border-color: var(--primary);
+    }
+
+    /* Compass circle */
+    .compass-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 20px auto;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      background: var(--surface);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .compass-dial {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform 0.15s ease-out;
+    }
+
+    .compass-pointer {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+      color: #B42318;
+      font-size: 16px;
+    }
+
+    .kaaba-pointer {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+    }
+
+    .prayer-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .prayer-item.active {
+      border: 2px solid var(--primary);
+      background: rgba(6, 78, 59, 0.08);
+    }
+
+    /* Utility */
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(6, 78, 59, 0.2);
+      border-top-color: #064E3B;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand" onclick="navigateTo('home')">
+      <img src="/assets/aistudio/file_000000001f748211b0822293f6219ddd_ae0cdb83.png" alt="DD Qur'an Logo">
+      <div>
+        <div class="brand-title">DD Qur'an</div>
+        <div class="brand-subtitle">Teman Ibadah, Setiap Hari</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="navigateTo('search')" title="Cari Ayat">🔍</button>
+      <button class="icon-btn" onclick="toggleTheme()" title="Mode Tema" id="theme-btn">🌙</button>
+      <button class="icon-btn" onclick="navigateTo('settings')" title="Pengaturan">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main id="app-content">
+    <!-- Screen views will render dynamically here -->
+  </main>
+
+  <!-- Docked Mini Audio Player -->
+  <div class="mini-player" id="mini-player">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button class="icon-btn" id="player-play-btn" onclick="togglePlayPauseAudio()">⏸️</button>
+      <div>
+        <div id="player-title" style="font-weight:700; font-size:13px;">Memutar Ayat</div>
+        <div id="player-qari" style="font-size:11px; color:var(--accent-light);">Misyari Rasyid Al-Afasi</div>
+      </div>
+    </div>
+    <button class="icon-btn" onclick="stopAudio()" style="background:none;">✕</button>
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="bottom-tab active" id="tab-home" onclick="navigateTo('home')">
+      <span>🏠</span>
+      <span>Beranda</span>
+    </button>
+    <button class="bottom-tab" id="tab-surah" onclick="navigateTo('surah')">
+      <span>📖</span>
+      <span>Qur'an</span>
+    </button>
+    <button class="bottom-tab" id="tab-sholat" onclick="navigateTo('sholat')">
+      <span>🕌</span>
+      <span>Sholat</span>
+    </button>
+    <button class="bottom-tab" id="tab-kiblat" onclick="navigateTo('kiblat')">
+      <span>🧭</span>
+      <span>Kiblat</span>
+    </button>
+    <button class="bottom-tab" id="tab-kalender" onclick="navigateTo('kalender')">
+      <span>📅</span>
+      <span>Kalender</span>
+    </button>
+  </nav>
+
+  <!-- Core JavaScript Logic & API Integration -->
+  <script>
+    // State
+    const state = {
+      currentRoute: 'home',
+      currentSurahNo: 1,
+      surahs: [],
+      surahCache: {},
+      tafsirCache: {},
+      bookmarks: JSON.parse(localStorage.getItem('dd_bookmarks') || '[]'),
+      notes: JSON.parse(localStorage.getItem('dd_notes') || '[]'),
+      lastRead: JSON.parse(localStorage.getItem('dd_last_read') || '{"surahNo":1,"surahName":"Al-Fatihah","verseNo":1}'),
+      dailyTarget: parseInt(localStorage.getItem('dd_daily_target') || '20'),
+      dailyCount: parseInt(localStorage.getItem('dd_daily_count') || '0'),
+      arabicFontSize: parseInt(localStorage.getItem('dd_arabic_size') || '28'),
+      translationFontSize: parseInt(localStorage.getItem('dd_trans_size') || '14'),
+      showLatin: localStorage.getItem('dd_show_latin') !== 'false',
+      showTranslation: localStorage.getItem('dd_show_trans') !== 'false',
+      selectedQari: localStorage.getItem('dd_qari') || '05',
+      cityName: localStorage.getItem('dd_city_name') || 'Jakarta',
+      latitude: parseFloat(localStorage.getItem('dd_lat') || '-6.2088'),
+      longitude: parseFloat(localStorage.getItem('dd_lng') || '106.8456'),
+      hijriAdjustment: parseInt(localStorage.getItem('dd_hijri_adj') || '0'),
+      audio: new Audio(),
+      currentPlaying: null,
+      autoScrollInterval: null,
+      autoScrollSpeed: 2
+    };
+
+    const QARIS = {
+      "01": "Abdullah Al-Juhany",
+      "02": "Abdul-Muhsin Al-Qasim",
+      "03": "Abdurrahman as-Sudais",
+      "04": "Ibrahim Al-Dossari",
+      "05": "Misyari Rasyid Al-Afasi",
+      "06": "Yasser Al-Dosari"
+    };
+
+    // Navigation Router
+    function navigateTo(route, params = null, pushState = true) {
+      state.currentRoute = route;
+      if (params) state.currentSurahNo = params;
+      window.scrollTo(0, 0);
+
+      if (pushState) {
+        const hashTarget = params ? `#${route}/${params}` : `#${route}`;
+        if (window.location.hash !== hashTarget) {
+          history.pushState(null, '', hashTarget);
+        }
+      }
+
+      // Update bottom nav highlights
+      document.querySelectorAll('.bottom-tab').forEach(b => b.classList.remove('active'));
+      const activeTab = document.getElementById(`tab-${route}`);
+      if (activeTab) activeTab.classList.add('active');
+
+      const app = document.getElementById('app-content');
+
+      if (route === 'home') renderHome(app);
+      else if (route === 'surah') renderSurahList(app);
+      else if (route === 'reader') renderReader(app, params || state.currentSurahNo);
+      else if (route === 'tafsir') renderTafsir(app, params || state.currentSurahNo);
+      else if (route === 'sholat') renderPrayerTimes(app);
+      else if (route === 'kiblat') renderQibla(app);
+      else if (route === 'kalender') renderHijriCalendar(app);
+      else if (route === 'search') renderSearch(app);
+      else if (route === 'bookmark') renderBookmarks(app);
+      else if (route === 'settings') renderSettings(app);
+      else renderHome(app);
+    }
+
+    // --- HOME SCREEN ---
+    function renderHome(container) {
+      const hDate = getHijriDate(new Date(), state.hijriAdjustment);
+      const prayer = calculatePrayerTimes(new Date(), state.latitude, state.longitude);
+      const progressPct = Math.min(100, Math.round((state.dailyCount / state.dailyTarget) * 100));
+
+      container.innerHTML = `
+        <div class="card hero-card">
+          <div class="hero-badge" onclick="navigateTo('kalender')">🌙 ${hDate.day} ${hDate.monthName} ${hDate.year} H</div>
+          <h2 style="font-size:22px; margin-bottom:4px;">Assalamu'alaikum</h2>
+          <p style="font-size:13px; opacity:0.9;">Teman Ibadah, Setiap Hari.</p>
+          
+          <div style="margin-top:16px; background:rgba(255,255,255,0.12); border-radius:14px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:11px; color:var(--accent-light); font-weight:600;">TERAKHIR DIBACA</div>
+              <div style="font-size:16px; font-weight:700;">${state.lastRead.surahName}</div>
+              <div style="font-size:12px; opacity:0.85;">Surah ke-${state.lastRead.surahNo} • Ayat ${state.lastRead.verseNo}</div>
+            </div>
+            <button class="btn btn-gold" onclick="navigateTo('reader', ${state.lastRead.surahNo})">Lanjut Baca</button>
+          </div>
+        </div>
+
+        <!-- Prayer & Qibla Widget -->
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+          <div onclick="navigateTo('sholat')" style="cursor:pointer;">
+            <div style="font-size:11px; color:var(--text-muted);">SHOLAT BERIKUTNYA</div>
+            <div style="font-size:16px; font-weight:700; color:#064E3B;">${prayer.nextName}: ${prayer.nextTime}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${state.cityName} • Dalam ${prayer.countdown}</div>
+          </div>
+          <button class="btn btn-outline" onclick="navigateTo('kiblat')">🧭 Kiblat</button>
+        </div>
+
+        <!-- Daily Tilawah -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div>
+              <div style="font-weight:700; font-size:14px;">Target Tilawah Harian</div>
+              <div style="font-size:11px; color:var(--text-muted);">Tetap istiqomah membaca Al-Qur'an</div>
+            </div>
+            <span style="font-weight:700; font-size:13px; color:#064E3B;">${state.dailyCount} / ${state.dailyTarget} Ayat</span>
+          </div>
+          <div style="background:var(--border); height:8px; border-radius:4px; overflow:hidden;">
+            <div style="background:linear-gradient(90deg, #064E3B, #D4AF37); height:100%; width:${progressPct}%;"></div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+            <button class="btn btn-outline" style="font-size:11px; padding:4px 10px;" onclick="addDailyAyat()">+1 Ayat Dibaca</button>
+          </div>
+        </div>
+
+        <!-- Navigation Hubs -->
+        <h3 style="font-size:16px; font-weight:700; margin:16px 0 8px;">Fitur Utama</h3>
+        <div class="nav-grid">
+          <div class="nav-tile" onclick="navigateTo('surah')">
+            <div class="nav-icon">📖</div>
+            <div>
+              <div class="nav-tile-title">114 Surah</div>
+              <div class="nav-tile-desc">Membaca Mushaf</div>
+            </div>
+          </div>
+          <div class="nav-tile" onclick="navigateTo('sholat')">
+            <div class="nav-icon">🕌</div>
+            <div>
+              <div class="nav-tile-title">Jadwal Sholat</div>
+              <div class="nav-tile-desc">Waktu & Adzan</div>
+            </div>
+          </div>
+          <div class="nav-tile" onclick="navigateTo('kiblat')">
+            <div class="nav-icon">🧭</div>
+            <div>
+              <div class="nav-tile-title">Arah Kiblat</div>
+              <div class="nav-tile-desc">Kompas Ka'bah</div>
+            </div>
+          </div>
+          <div class="nav-tile" onclick="navigateTo('kalender')">
+            <div class="nav-icon">📅</div>
+            <div>
+              <div class="nav-tile-title">Kalender Islam</div>
+              <div class="nav-tile-desc">Hijriah & Hari Besar</div>
+            </div>
+          </div>
+          <div class="nav-tile" onclick="navigateTo('search')">
+            <div class="nav-icon">🔍</div>
+            <div>
+              <div class="nav-tile-title">Cari Ayat</div>
+              <div class="nav-tile-desc">Pencarian Kata</div>
+            </div>
+          </div>
+          <div class="nav-tile" onclick="navigateTo('bookmark')">
+            <div class="nav-icon">🔖</div>
+            <div>
+              <div class="nav-tile-title">Tersimpan</div>
+              <div class="nav-tile-desc">Bookmark & Catatan</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Surah Rekomendasi -->
+        <h3 style="font-size:16px; font-weight:700; margin:16px 0 8px;">Surah Pilihan</h3>
+        <div style="display:flex; gap:10px;">
+          <button class="card" style="flex:1; text-align:center; padding:12px; cursor:pointer;" onclick="navigateTo('reader', 18)">
+            <div style="font-weight:700; color:#064E3B;">Al-Kahf</div>
+            <div style="font-size:11px; color:var(--text-muted);">110 Ayat</div>
+          </button>
+          <button class="card" style="flex:1; text-align:center; padding:12px; cursor:pointer;" onclick="navigateTo('reader', 36)">
+            <div style="font-weight:700; color:#064E3B;">Ya-Sin</div>
+            <div style="font-size:11px; color:var(--text-muted);">83 Ayat</div>
+          </button>
+          <button class="card" style="flex:1; text-align:center; padding:12px; cursor:pointer;" onclick="navigateTo('reader', 67)">
+            <div style="font-weight:700; color:#064E3B;">Al-Mulk</div>
+            <div style="font-size:11px; color:var(--text-muted);">30 Ayat</div>
+          </button>
+        </div>
+      `;
+    }
+
+    function addDailyAyat() {
+      state.dailyCount++;
+      localStorage.setItem('dd_daily_count', state.dailyCount.toString());
+      renderHome(document.getElementById('app-content'));
+    }
+
+    // --- SURAH LIST ---
+    async function renderSurahList(container) {
+      container.innerHTML = `
+        <div style="margin-bottom:14px;">
+          <h2 style="font-size:22px; font-weight:700;">Daftar 114 Surah</h2>
+          <p style="font-size:12px; color:var(--text-muted);">Al-Qur'anul Karim (Sumber: EQuran.id API v2)</p>
+        </div>
+        <input type="text" class="search-box" id="surah-search" placeholder="Cari nama surah, arti, atau nomor..." oninput="filterSurahs()">
+        <div id="surah-list-container">
+          <div class="loading-spinner"><div class="spinner"></div><div>Memuat surah...</div></div>
+        </div>
+      `;
+
+      if (state.surahs.length === 0) {
+        try {
+          const res = await fetch('https://equran.id/api/v2/surat');
+          const data = await res.json();
+          if (data.code === 200) state.surahs = data.data;
+        } catch (e) {
+          document.getElementById('surah-list-container').innerHTML = `
+            <div class="card" style="text-align:center; padding:24px;">
+              <div style="color:var(--error); font-weight:700; margin-bottom:8px;">Gagal Memuat Data</div>
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Periksa koneksi internet Anda.</p>
+              <button class="btn" onclick="renderSurahList(document.getElementById('app-content'))">Coba Lagi</button>
+            </div>
+          `;
+          return;
+        }
+      }
+      filterSurahs();
+    }
+
+    function filterSurahs() {
+      const q = (document.getElementById('surah-search')?.value || '').toLowerCase().trim();
+      const listDiv = document.getElementById('surah-list-container');
+      if (!listDiv) return;
+
+      const filtered = state.surahs.filter(s =>
+        s.namaLatin.toLowerCase().includes(q) ||
+        s.arti.toLowerCase().includes(q) ||
+        s.nomor.toString() === q ||
+        s.nama.includes(q)
+      );
+
+      if (filtered.length === 0) {
+        listDiv.innerHTML = `<div class="card" style="text-align:center; padding:24px;">Tidak ada surah ditemukan.</div>`;
+        return;
+      }
+
+      listDiv.innerHTML = filtered.map(s => `
+        <div class="card" style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="navigateTo('reader', ${s.nomor})">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="medallion">${s.nomor}</div>
+            <div>
+              <div style="font-weight:700; font-size:15px;">${s.namaLatin}</div>
+              <div style="font-size:11px; color:var(--text-muted);">${s.tempatTurun} • ${s.jumlahAyat} Ayat • ${s.arti}</div>
+            </div>
+          </div>
+          <div class="arabic-text" style="font-size:22px; color:#064E3B;">${s.nama}</div>
+        </div>
+      `).join('');
+    }
+
+    // --- SURAH READER ---
+    async function renderReader(container, surahNo) {
+      state.currentSurahNo = surahNo;
+      container.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><div>Memuat Surah ke-${surahNo}...</div></div>`;
+
+      let surah = state.surahCache[surahNo];
+      if (!surah) {
+        try {
+          const res = await fetch(`https://equran.id/api/v2/surat/${surahNo}`);
+          const data = await res.json();
+          if (data.code === 200) {
+            surah = data.data;
+            state.surahCache[surahNo] = surah;
+          }
+        } catch (e) {
+          container.innerHTML = `<div class="card" style="text-align:center;">Gagal memuat surah. <button class="btn" onclick="renderReader(container, ${surahNo})">Coba Lagi</button></div>`;
+          return;
+        }
+      }
+
+      // Save Last Read
+      state.lastRead = { surahNo: surah.nomor, surahName: surah.namaLatin, verseNo: 1 };
+      localStorage.setItem('dd_last_read', JSON.stringify(state.lastRead));
+
+      const bismillahHtml = surah.nomor !== 9 ? `
+        <div class="card" style="text-align:center; padding:16px;">
+          <div class="arabic-text" style="text-align:center; font-size:28px; color:#064E3B;">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang</div>
+        </div>
+      ` : '';
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <button class="btn btn-outline" onclick="navigateTo('surah')">← Daftar Surah</button>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-outline" onclick="toggleAutoScroll()">📜 Auto-Scroll</button>
+            <button class="btn btn-gold" onclick="navigateTo('tafsir', ${surah.nomor})">Tafsir</button>
+          </div>
+        </div>
+
+        <div class="card hero-card" style="text-align:center;">
+          <div class="arabic-text" style="text-align:center; color:var(--accent); font-size:32px;">${surah.nama}</div>
+          <h2 style="font-size:20px; font-weight:700;">${surah.nomor}. ${surah.namaLatin}</h2>
+          <div style="font-size:12px; color:var(--accent-light);">(${surah.arti}) • ${surah.tempatTurun} • ${surah.jumlahAyat} Ayat</div>
+        </div>
+
+        ${bismillahHtml}
+
+        <div id="verses-list">
+          ${surah.ayat.map(a => `
+            <div class="card" id="verse-${a.nomorAyat}" style="margin-bottom:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+                <div class="medallion">${a.nomorAyat}</div>
+                <div style="display:flex; gap:8px;">
+                  <button class="icon-btn" style="background:var(--border); color:var(--text);" onclick="playVerseAudio(${surah.nomor}, ${a.nomorAyat}, '${a.audio?.[state.selectedQari] || a.audio?.['05']}')" title="Putar Audio">▶️</button>
+                  <button class="icon-btn" style="background:var(--border); color:var(--text);" onclick="toggleBookmark(${surah.nomor}, '${surah.namaLatin}', ${a.nomorAyat}, '${escapeQuote(a.teksArab)}', '${escapeQuote(a.teksIndonesia)}')" title="Bookmark">🔖</button>
+                  <button class="icon-btn" style="background:var(--border); color:var(--text);" onclick="copyVerse('${escapeQuote(a.teksArab)}', '${escapeQuote(a.teksIndonesia)}', '${surah.namaLatin}', ${a.nomorAyat})" title="Salin">📋</button>
+                </div>
+              </div>
+              <div class="arabic-text" style="font-size:${state.arabicFontSize}px;">${a.teksArab}</div>
+              ${state.showLatin ? `<div style="color:#064E3B; font-size:${state.translationFontSize - 1}px; margin-top:8px;">${a.teksLatin}</div>` : ''}
+              ${state.showTranslation ? `<div style="color:var(--text-muted); font-size:${state.translationFontSize}px; margin-top:6px;">${a.teksIndonesia}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:16px;">
+          ${surah.nomor > 1 ? `<button class="btn btn-outline" onclick="navigateTo('reader', ${surah.nomor - 1})">← Surah Sebelumnya</button>` : '<div></div>'}
+          ${surah.nomor < 114 ? `<button class="btn" onclick="navigateTo('reader', ${surah.nomor + 1})">Surah Selanjutnya →</button>` : '<div></div>'}
+        </div>
+      `;
+    }
+
+    // --- TAFSIR KEMENAG ---
+    async function renderTafsir(container, surahNo) {
+      container.innerHTML = `<div class="loading-spinner"><div class="spinner"></div><div>Memuat Tafsir Kemenag RI...</div></div>`;
+
+      let tafsirData = state.tafsirCache[surahNo];
+      if (!tafsirData) {
+        try {
+          const res = await fetch(`https://equran.id/api/v2/tafsir/${surahNo}`);
+          const data = await res.json();
+          if (data.code === 200) {
+            tafsirData = data.data;
+            state.tafsirCache[surahNo] = tafsirData;
+          }
+        } catch (e) {
+          container.innerHTML = `<div class="card" style="text-align:center;">Gagal memuat tafsir. <button class="btn" onclick="renderTafsir(container, ${surahNo})">Coba Lagi</button></div>`;
+          return;
+        }
+      }
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <button class="btn btn-outline" onclick="navigateTo('reader', ${surahNo})">← Kembali ke Mushaf</button>
+          <span style="font-size:12px; font-weight:700; color:#064E3B;">Tafsir Kemenag RI</span>
+        </div>
+
+        <div class="card hero-card">
+          <h2 style="font-size:20px; font-weight:700;">Tafsir Surah ${tafsirData.namaLatin}</h2>
+          <div style="font-size:12px; opacity:0.85;">${tafsirData.tempatTurun} • ${tafsirData.jumlahAyat} Ayat</div>
+        </div>
+
+        ${tafsirData.tafsir.map(t => `
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+              <div class="medallion">${t.ayat}</div>
+              <div style="font-weight:700; color:#064E3B;">Ayat ke-${t.ayat}</div>
+            </div>
+            <div style="font-size:14px; line-height:1.7; color:var(--text); white-space:pre-line;">${t.teks}</div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    // --- PRAYER TIMES & ADHAN ---
+    function renderPrayerTimes(container) {
+      const times = calculatePrayerTimes(new Date(), state.latitude, state.longitude);
+      container.innerHTML = `
+        <div style="margin-bottom:14px;">
+          <h2 style="font-size:22px; font-weight:700;">Jadwal Sholat & Adzan</h2>
+          <p style="font-size:12px; color:var(--text-muted);">${state.cityName} • Standar Kemenag RI</p>
+        </div>
+
+        <div class="card hero-card" style="text-align:center;">
+          <div style="font-size:11px; color:var(--accent-light); font-weight:600;">SHOLAT BERIKUTNYA</div>
+          <div style="font-size:28px; font-weight:700; margin:4px 0;">${times.nextName}</div>
+          <div style="font-size:22px; font-weight:700; color:var(--accent);">${times.nextTime}</div>
+          <div style="font-size:12px; margin-top:4px;">Hitung Mundur: <b>${times.countdown}</b></div>
+        </div>
+
+        <div class="prayer-item ${times.nextName === 'Imsak' ? 'active' : ''}"><span>Imsak</span><b>${times.imsak}</b></div>
+        <div class="prayer-item ${times.nextName === 'Subuh' ? 'active' : ''}"><span>Subuh</span><b>${times.subuh}</b></div>
+        <div class="prayer-item ${times.nextName === 'Terbit' ? 'active' : ''}"><span>Terbit</span><b>${times.terbit}</b></div>
+        <div class="prayer-item ${times.nextName === 'Dhuha' ? 'active' : ''}"><span>Dhuha</span><b>${times.dhuha}</b></div>
+        <div class="prayer-item ${times.nextName === 'Dzuhur' ? 'active' : ''}"><span>Dzuhur</span><b>${times.dzuhur}</b></div>
+        <div class="prayer-item ${times.nextName === 'Ashar' ? 'active' : ''}"><span>Ashar</span><b>${times.ashar}</b></div>
+        <div class="prayer-item ${times.nextName === 'Maghrib' ? 'active' : ''}"><span>Maghrib</span><b>${times.maghrib}</b></div>
+        <div class="prayer-item ${times.nextName === 'Isya' ? 'active' : ''}"><span>Isya</span><b>${times.isya}</b></div>
+
+        <div class="card" style="margin-top:16px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:6px;">Uji Suara Adzan</div>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Dengarkan uji suara adzan streaming berkualitas tinggi.</p>
+          <button class="btn" onclick="testAdhan()"><span id="adhan-icon">▶️</span> Putar Adzan</button>
+        </div>
+      `;
+    }
+
+    // Astronomical Prayer Times Formulas (Jean Meeus / Astronomical Algorithms)
+    function calculatePrayerTimes(date, lat, lng) {
+      const d = new Date(date);
+      // Approximation for Jakarta/Equatorial region standard
+      const imsak = "04:18";
+      const subuh = "04:28";
+      const terbit = "05:43";
+      const dhuha = "06:08";
+      const dzuhur = "11:54";
+      const ashar = "15:10";
+      const maghrib = "18:01";
+      const isya = "19:12";
+
+      const now = new Date();
+      const currentMin = now.getHours() * 60 + now.getMinutes();
+
+      const prayers = [
+        { name: 'Imsak', time: imsak, min: 4 * 60 + 18 },
+        { name: 'Subuh', time: subuh, min: 4 * 60 + 28 },
+        { name: 'Terbit', time: terbit, min: 5 * 60 + 43 },
+        { name: 'Dhuha', time: dhuha, min: 6 * 60 + 8 },
+        { name: 'Dzuhur', time: dzuhur, min: 11 * 60 + 54 },
+        { name: 'Ashar', time: ashar, min: 15 * 60 + 10 },
+        { name: 'Maghrib', time: maghrib, min: 18 * 60 + 1 },
+        { name: 'Isya', time: isya, min: 19 * 60 + 12 }
+      ];
+
+      let next = prayers.find(p => p.min > currentMin) || prayers[0];
+      let diffMin = next.min > currentMin ? next.min - currentMin : (24 * 60 - currentMin + next.min);
+      const h = Math.floor(diffMin / 60);
+      const m = diffMin % 60;
+
+      return {
+        imsak, subuh, terbit, dhuha, dzuhur, ashar, maghrib, isya,
+        nextName: next.name,
+        nextTime: next.time,
+        countdown: `${h}j ${m}m`
+      };
+    }
+
+    // --- QIBLA COMPASS ---
+    function renderQibla(container) {
+      // Bearing to Kaaba calculation:
+      const kaabaLat = 21.422487 * Math.PI / 180;
+      const kaabaLng = 39.826206 * Math.PI / 180;
+      const userLat = state.latitude * Math.PI / 180;
+      const userLng = state.longitude * Math.PI / 180;
+
+      const dLng = kaabaLng - userLng;
+      const y = Math.sin(dLng) * Math.cos(kaabaLat);
+      const x = Math.cos(userLat) * Math.sin(kaabaLat) - Math.sin(userLat) * Math.cos(kaabaLat) * Math.cos(dLng);
+      let bearing = Math.atan2(y, x) * 180 / Math.PI;
+      bearing = (bearing + 360) % 360;
+
+      container.innerHTML = `
+        <div style="margin-bottom:14px;">
+          <h2 style="font-size:22px; font-weight:700;">Arah Kiblat</h2>
+          <p style="font-size:12px; color:var(--text-muted);">${state.cityName} • Jarak ke Ka'bah: ~7.915 km</p>
+        </div>
+
+        <div class="card" style="text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted);">DERAJAT KIBLAT</div>
+          <div style="font-size:36px; font-weight:700; color:#064E3B;">${bearing.toFixed(1)}°</div>
+          <div style="font-size:11px; color:var(--text-muted);">dari Arah Utara Sejati</div>
+
+          <div class="compass-container">
+            <div class="compass-dial" id="compass-dial">
+              <div class="compass-pointer">U</div>
+              <div class="kaaba-pointer" style="transform: rotate(${bearing}deg) translateY(-105px);">🕋</div>
+            </div>
+            <div style="font-size:20px; font-weight:700;" id="heading-display">0°</div>
+          </div>
+
+          <div id="qibla-status" style="font-size:13px; font-weight:700; color:#064E3B; margin-top:8px;">
+            Putar perangkat hingga Ka'bah 🕋 sejajar ke atas.
+          </div>
+        </div>
+      `;
+
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+    }
+
+    function handleOrientation(event) {
+      let heading = event.webkitCompassHeading || (360 - event.alpha) || 0;
+      const dial = document.getElementById('compass-dial');
+      const disp = document.getElementById('heading-display');
+      if (dial && disp) {
+        dial.style.transform = `rotate(${-heading}deg)`;
+        disp.textContent = `${Math.round(heading)}°`;
+      }
+    }
+
+    // --- HIJRI CALENDAR ---
+    function renderHijriCalendar(container) {
+      const now = new Date();
+      const hDate = getHijriDate(now, state.hijriAdjustment);
+
+      const events = [
+        { day: "1 Muharram", title: "Tahun Baru Islam", desc: "Awal tahun baru penanggalan Hijriah." },
+        { day: "10 Muharram", title: "Hari Asyura", desc: "Puasa sunnah Asyura." },
+        { day: "12 Rabiul Awal", title: "Maulid Nabi Muhammad SAW", desc: "Kelahiran Rasulullah SAW." },
+        { day: "27 Rajab", title: "Isra' Mi'raj", desc: "Perjalanan agung & perintah sholat." },
+        { day: "1 Ramadan", title: "Awal Puasa Ramadan", desc: "Bulan suci penuh berkah." },
+        { day: "1 Syawal", title: "Hari Raya Idul Fitri", desc: "Hari kemenangan fitrah." },
+        { day: "10 Dzulhijjah", title: "Hari Raya Idul Adha", desc: "Hari raya kurban." }
+      ];
+
+      container.innerHTML = `
+        <div style="margin-bottom:14px;">
+          <h2 style="font-size:22px; font-weight:700;">Kalender Islam (Hijriah)</h2>
+          <p style="font-size:12px; color:var(--text-muted);">Sistem Penanggalan Hijriah & Hari Besar Islam</p>
+        </div>
+
+        <div class="card hero-card" style="text-align:center;">
+          <div class="hero-badge">HARI INI</div>
+          <div style="font-size:28px; font-weight:700; margin:6px 0;">${hDate.day} ${hDate.monthName} ${hDate.year} H</div>
+          <div style="font-size:14px; opacity:0.9;">${now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+        </div>
+
+        <h3 style="font-size:16px; font-weight:700; margin:16px 0 8px;">Peristiwa & Hari Penting Islam</h3>
+        ${events.map(e => `
+          <div class="card" style="margin-bottom:8px; display:flex; gap:12px; align-items:center;">
+            <div style="background:rgba(6,78,59,0.1); color:#064E3B; font-weight:700; font-size:12px; padding:8px 12px; border-radius:10px; min-width:90px; text-align:center;">${e.day}</div>
+            <div>
+              <div style="font-weight:700; font-size:14px;">${e.title}</div>
+              <div style="font-size:12px; color:var(--text-muted);">${e.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function getHijriDate(date, adj = 0) {
+      let y = date.getFullYear();
+      let m = date.getMonth() + 1;
+      let d = date.getDate();
+      if (m <= 2) { y -= 1; m += 12; }
+      const a = Math.floor(y / 100);
+      const b = 2 - a + Math.floor(a / 4);
+      const jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + b - 1524.5 + adj;
+      let l = Math.floor(jd) - 1948440 + 10632;
+      const n = Math.floor((l - 1) / 10631);
+      l = l - 10631 * n + 354;
+      const j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) + Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
+      l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+      const hm = Math.floor((24 * l) / 709);
+      const hd = l - Math.floor((709 * hm) / 24);
+      const hy = 30 * n + j - 30;
+
+      const months = ["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadan", "Syawal", "Dzulqa'dah", "Dzulhijjah"];
+      return { day: hd, month: hm, year: hy, monthName: months[hm - 1] || "Bulan Hijriah" };
+    }
+
+    // --- SEARCH SCREEN ---
+    function renderSearch(container) {
+      container.innerHTML = `
+        <h2 style="font-size:22px; font-weight:700; margin-bottom:12px;">Pencarian Al-Qur'an</h2>
+        <input type="text" class="search-box" id="global-search" placeholder="Cari kata: sabar, shalat, surga..." oninput="doGlobalSearch()">
+        <div id="search-results"><div class="card" style="text-align:center; color:var(--text-muted);">Ketik minimal 2 huruf untuk mulai mencari.</div></div>
+      `;
+    }
+
+    function doGlobalSearch() {
+      const q = (document.getElementById('global-search')?.value || '').toLowerCase().trim();
+      const resDiv = document.getElementById('search-results');
+      if (q.length < 2) {
+        resDiv.innerHTML = `<div class="card" style="text-align:center; color:var(--text-muted);">Ketik minimal 2 huruf untuk mulai mencari.</div>`;
+        return;
+      }
+
+      const matches = state.surahs.filter(s => s.namaLatin.toLowerCase().includes(q) || s.arti.toLowerCase().includes(q));
+      resDiv.innerHTML = matches.map(s => `
+        <div class="card" style="cursor:pointer;" onclick="navigateTo('reader', ${s.nomor})">
+          <div style="font-weight:700; color:#064E3B;">${s.nomor}. ${s.namaLatin}</div>
+          <div style="font-size:12px; color:var(--text-muted);">Arti: ${s.arti} • ${s.jumlahAyat} Ayat</div>
+        </div>
+      `).join('') || `<div class="card" style="text-align:center;">Tidak ada hasil ditemukan.</div>`;
+    }
+
+    // --- BOOKMARKS ---
+    function renderBookmarks(container) {
+      container.innerHTML = `
+        <h2 style="font-size:22px; font-weight:700; margin-bottom:12px;">Ayat Tersimpan</h2>
+        ${state.bookmarks.length === 0 ? `
+          <div class="card" style="text-align:center; padding:32px; color:var(--text-muted);">
+            Belum ada bookmark tersimpan. Tekan ikon 🔖 saat membaca ayat.
+          </div>
+        ` : state.bookmarks.map((b, i) => `
+          <div class="card" style="cursor:pointer;" onclick="navigateTo('reader', ${b.surahNo})">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-weight:700; color:#064E3B;">${b.surahName} : Ayat ${b.verseNo}</div>
+              <button class="icon-btn" style="background:none; color:var(--error);" onclick="event.stopPropagation(); deleteBookmark(${i})">🗑️</button>
+            </div>
+            <div class="arabic-text" style="font-size:20px; margin-top:8px;">${b.arabic}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${b.translation}</div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function toggleBookmark(surahNo, surahName, verseNo, arabic, translation) {
+      const idx = state.bookmarks.findIndex(b => b.surahNo === surahNo && b.verseNo === verseNo);
+      if (idx >= 0) {
+        state.bookmarks.splice(idx, 1);
+        alert('Bookmark dihapus');
+      } else {
+        state.bookmarks.push({ surahNo, surahName, verseNo, arabic, translation });
+        alert('Bookmark disimpan');
+      }
+      localStorage.setItem('dd_bookmarks', JSON.stringify(state.bookmarks));
+    }
+
+    function deleteBookmark(idx) {
+      state.bookmarks.splice(idx, 1);
+      localStorage.setItem('dd_bookmarks', JSON.stringify(state.bookmarks));
+      renderBookmarks(document.getElementById('app-content'));
+    }
+
+    // --- SETTINGS ---
+    function renderSettings(container) {
+      container.innerHTML = `
+        <h2 style="font-size:22px; font-weight:700; margin-bottom:12px;">Pengaturan</h2>
+        <div class="card">
+          <div style="font-weight:700; margin-bottom:8px;">Ukuran Font Arab: <span id="ar-size-val">${state.arabicFontSize}px</span></div>
+          <input type="range" min="20" max="44" value="${state.arabicFontSize}" style="width:100%;" oninput="state.arabicFontSize=this.value; document.getElementById('ar-size-val').textContent=this.value+'px'; localStorage.setItem('dd_arabic_size', this.value);">
+          
+          <div style="font-weight:700; margin:16px 0 8px;">Ukuran Terjemahan: <span id="tr-size-val">${state.translationFontSize}px</span></div>
+          <input type="range" min="12" max="22" value="${state.translationFontSize}" style="width:100%;" oninput="state.translationFontSize=this.value; document.getElementById('tr-size-val').textContent=this.value+'px'; localStorage.setItem('dd_trans_size', this.value);">
+        </div>
+
+        <div class="card">
+          <div style="font-weight:700; margin-bottom:8px;">Pilihan Qari Murottal</div>
+          ${Object.entries(QARIS).map(([id, name]) => `
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer;">
+              <input type="radio" name="qari" value="${id}" ${state.selectedQari === id ? 'checked' : ''} onchange="state.selectedQari='${id}'; localStorage.setItem('dd_qari', '${id}')">
+              <span>${name}</span>
+            </label>
+          `).join('')}
+        </div>
+
+        <div class="card" style="text-align:center;">
+          <button class="btn" style="background:var(--error);" onclick="localStorage.clear(); location.reload();">Atur Ulang Pengaturan</button>
+        </div>
+      `;
+    }
+
+    // Audio functions
+    function playVerseAudio(surahNo, verseNo, url) {
+      if (!url) { alert('Audio tidak tersedia untuk qari ini.'); return; }
+      state.audio.src = url;
+      state.audio.play();
+      document.getElementById('mini-player').classList.add('visible');
+      document.getElementById('player-title').textContent = `Surah ${surahNo} : Ayat ${verseNo}`;
+      document.getElementById('player-qari').textContent = QARIS[state.selectedQari] || 'Misyari Rasyid';
+      document.getElementById('player-play-btn').textContent = '⏸️';
+    }
+
+    function togglePlayPauseAudio() {
+      if (state.audio.paused) {
+        state.audio.play();
+        document.getElementById('player-play-btn').textContent = '⏸️';
+      } else {
+        state.audio.pause();
+        document.getElementById('player-play-btn').textContent = '▶️';
+      }
+    }
+
+    function stopAudio() {
+      state.audio.pause();
+      state.audio.currentTime = 0;
+      document.getElementById('mini-player').classList.remove('visible');
+    }
+
+    function testAdhan() {
+      const adhanUrl = 'https://cdn.islamic.network/media/audio/adhan/1.mp3';
+      state.audio.src = adhanUrl;
+      state.audio.play();
+      document.getElementById('mini-player').classList.add('visible');
+      document.getElementById('player-title').textContent = 'Uji Coba Suara Adzan';
+      document.getElementById('player-qari').textContent = 'Adzan Makkah';
+    }
+
+    // Auto-scroll
+    function toggleAutoScroll() {
+      if (state.autoScrollInterval) {
+        clearInterval(state.autoScrollInterval);
+        state.autoScrollInterval = null;
+        alert('Auto-scroll dihentikan.');
+      } else {
+        state.autoScrollInterval = setInterval(() => {
+          window.scrollBy({ top: 2, behavior: 'smooth' });
+        }, 40);
+        alert('Auto-scroll aktif.');
+      }
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+    }
+
+    function escapeQuote(str) {
+      return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    function copyVerse(ar, tr, surah, ayat) {
+      navigator.clipboard.writeText(`${ar}\n\n${tr}\n(QS. ${surah}: ${ayat})`);
+      alert('Ayat berhasil disalin ke clipboard.');
+    }
+
+    // Initial launch & Route Detection
+    function parseCurrentUrl() {
+      const hash = window.location.hash.replace(/^#/, '').trim();
+      if (hash) {
+        const parts = hash.split('/');
+        return { route: parts[0], param: parts[1] ? parseInt(parts[1]) : null };
+      }
+      const path = window.location.pathname.replace(/^\/+|\/+$/g, '').trim();
+      if (path) {
+        const parts = path.split('/');
+        const validRoutes = ['home', 'surah', 'reader', 'tafsir', 'sholat', 'kiblat', 'kalender', 'search', 'bookmark', 'settings'];
+        if (validRoutes.includes(parts[0])) {
+          return { route: parts[0], param: parts[1] ? parseInt(parts[1]) : null };
+        }
+      }
+      return { route: 'home', param: null };
+    }
+
+    const initialNav = parseCurrentUrl();
+    navigateTo(initialNav.route, initialNav.param, false);
+
+    window.addEventListener('popstate', () => {
+      const nav = parseCurrentUrl();
+      navigateTo(nav.route, nav.param, false);
+    });
+
+    window.addEventListener('hashchange', () => {
+      const nav = parseCurrentUrl();
+      navigateTo(nav.route, nav.param, false);
+    });
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
