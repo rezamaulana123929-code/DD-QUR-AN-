@@ -16,6 +16,7 @@ data class AudioPlaybackState(
     val surahNumber: Int? = null,
     val surahName: String? = null,
     val verseNumber: Int? = null, // null if playing full surah
+    val qariId: String = "05",
     val qariName: String = "",
     val error: String? = null,
     val hasActiveTrack: Boolean = false
@@ -31,6 +32,8 @@ class AudioPlayerManager(private val context: Context) {
     private var currentPlaylist: List<AyatItem> = emptyList()
     private var currentPlaylistIndex: Int = -1
     private var currentQariId: String = "05"
+    private var currentSurahDetail: SurahDetail? = null
+    private var shouldStartOnPrepared: Boolean = true
 
     private fun getOrCreatePlayer(): MediaPlayer {
         mediaPlayer?.let { return it }
@@ -42,12 +45,20 @@ class AudioPlayerManager(private val context: Context) {
                     .build()
             )
             setOnPreparedListener { mp ->
-                _playbackState.value = _playbackState.value.copy(
-                    isLoading = false,
-                    isPlaying = true,
-                    error = null
-                )
-                mp.start()
+                if (shouldStartOnPrepared) {
+                    _playbackState.value = _playbackState.value.copy(
+                        isLoading = false,
+                        isPlaying = true,
+                        error = null
+                    )
+                    mp.start()
+                } else {
+                    _playbackState.value = _playbackState.value.copy(
+                        isLoading = false,
+                        isPlaying = false,
+                        error = null
+                    )
+                }
             }
             setOnCompletionListener {
                 onTrackFinished()
@@ -66,6 +77,16 @@ class AudioPlayerManager(private val context: Context) {
         return player
     }
 
+    private fun getFolder(qariId: String): String = when (qariId) {
+        "01" -> "Abdullah-Al-Juhany"
+        "02" -> "Abdul-Muhsin-Al-Qasim"
+        "03" -> "Abdurrahman-as-Sudais"
+        "04" -> "Ibrahim-Al-Dossari"
+        "05" -> "Misyari-Rasyid-Al-Afasi"
+        "06" -> "Yasser-Al-Dosari"
+        else -> "Misyari-Rasyid-Al-Afasi"
+    }
+
     fun playVerse(
         surahNumber: Int,
         surahName: String,
@@ -74,24 +95,22 @@ class AudioPlayerManager(private val context: Context) {
         qariName: String,
         allAyat: List<AyatItem> = emptyList()
     ) {
-        val audioUrl = ayat.audio?.get(qariId) ?: ayat.audio?.values?.firstOrNull()
-        if (audioUrl.isNullOrEmpty()) {
-            _playbackState.value = _playbackState.value.copy(
-                error = "Audio ayat $surahName:${ayat.nomorAyat} tidak tersedia untuk qari ini."
-            )
-            return
-        }
+        val audioUrl = ayat.audio?.get(qariId)
+            ?: "https://cdn.equran.id/audio-partial/${getFolder(qariId)}/${String.format("%03d%03d", surahNumber, ayat.nomorAyat)}.mp3"
 
         currentPlaylist = allAyat
         currentPlaylistIndex = allAyat.indexOfFirst { it.nomorAyat == ayat.nomorAyat }
         currentQariId = qariId
+        currentSurahDetail = null
 
         playUrl(
             url = audioUrl,
             surahNumber = surahNumber,
             surahName = surahName,
             verseNumber = ayat.nomorAyat,
-            qariName = qariName
+            qariId = qariId,
+            qariName = qariName,
+            startImmediately = true
         )
     }
 
@@ -100,25 +119,68 @@ class AudioPlayerManager(private val context: Context) {
         qariId: String,
         qariName: String
     ) {
-        val audioUrl = surah.audioFull?.get(qariId) ?: surah.audioFull?.values?.firstOrNull()
-        if (audioUrl.isNullOrEmpty()) {
-            _playbackState.value = _playbackState.value.copy(
-                error = "Audio penuh surah ${surah.namaLatin} tidak tersedia untuk qari ini."
-            )
-            return
-        }
+        val audioUrl = surah.audioFull?.get(qariId)
+            ?: "https://cdn.equran.id/audio-full/${getFolder(qariId)}/${String.format("%03d", surah.nomor)}.mp3"
 
         currentPlaylist = emptyList()
         currentPlaylistIndex = -1
         currentQariId = qariId
+        currentSurahDetail = surah
 
         playUrl(
             url = audioUrl,
             surahNumber = surah.nomor,
             surahName = surah.namaLatin,
             verseNumber = null,
-            qariName = qariName
+            qariId = qariId,
+            qariName = qariName,
+            startImmediately = true
         )
+    }
+
+    fun changeQari(newQariId: String, newQariName: String) {
+        if (!_playbackState.value.hasActiveTrack) {
+            currentQariId = newQariId
+            _playbackState.value = _playbackState.value.copy(qariId = newQariId, qariName = newQariName)
+            return
+        }
+
+        val wasPlaying = mediaPlayer?.isPlaying == true
+        currentQariId = newQariId
+
+        val surahNo = _playbackState.value.surahNumber ?: 1
+        val surahName = _playbackState.value.surahName ?: ""
+        val verseNo = _playbackState.value.verseNumber
+
+        if (verseNo != null && currentPlaylist.isNotEmpty() && currentPlaylistIndex in currentPlaylist.indices) {
+            val ayat = currentPlaylist[currentPlaylistIndex]
+            val audioUrl = ayat.audio?.get(newQariId)
+                ?: "https://cdn.equran.id/audio-partial/${getFolder(newQariId)}/${String.format("%03d%03d", surahNo, verseNo)}.mp3"
+
+            playUrl(
+                url = audioUrl,
+                surahNumber = surahNo,
+                surahName = surahName,
+                verseNumber = verseNo,
+                qariId = newQariId,
+                qariName = newQariName,
+                startImmediately = wasPlaying
+            )
+        } else if (currentSurahDetail != null) {
+            val surah = currentSurahDetail!!
+            val audioUrl = surah.audioFull?.get(newQariId)
+                ?: "https://cdn.equran.id/audio-full/${getFolder(newQariId)}/${String.format("%03d", surah.nomor)}.mp3"
+
+            playUrl(
+                url = audioUrl,
+                surahNumber = surah.nomor,
+                surahName = surah.namaLatin,
+                verseNumber = null,
+                qariId = newQariId,
+                qariName = newQariName,
+                startImmediately = wasPlaying
+            )
+        }
     }
 
     private fun playUrl(
@@ -126,11 +188,14 @@ class AudioPlayerManager(private val context: Context) {
         surahNumber: Int,
         surahName: String,
         verseNumber: Int?,
-        qariName: String
+        qariId: String,
+        qariName: String,
+        startImmediately: Boolean = true
     ) {
         try {
             val player = getOrCreatePlayer()
             player.reset()
+            shouldStartOnPrepared = startImmediately
 
             _playbackState.value = AudioPlaybackState(
                 isPlaying = false,
@@ -138,6 +203,7 @@ class AudioPlayerManager(private val context: Context) {
                 surahNumber = surahNumber,
                 surahName = surahName,
                 verseNumber = verseNumber,
+                qariId = qariId,
                 qariName = qariName,
                 error = null,
                 hasActiveTrack = true

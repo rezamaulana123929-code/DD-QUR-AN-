@@ -409,6 +409,11 @@ class QuranViewModel(application: Application) : AndroidViewModel(application) {
         audioPlayerManager.previousVerse()
     }
 
+    fun changeQari(qariId: String, qariName: String) {
+        userPreferences.updateSelectedQari(qariId)
+        audioPlayerManager.changeQari(qariId, qariName)
+    }
+
     // Bookmarks
     fun toggleBookmark(
         surahNumber: Int,

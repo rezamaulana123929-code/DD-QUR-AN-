@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -81,13 +82,18 @@ fun HomeScreen(
     onIncrementAyatProgress: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag("home_screen"),
-        contentPadding = PaddingValues(bottom = 24.dp)
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
-        // Hero Header with Brand & Logo
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .widthIn(max = 760.dp)
+                .testTag("home_screen"),
+            contentPadding = PaddingValues(bottom = 24.dp)
+        ) {
+            // Hero Header with Brand & Logo
         item {
             HeroHeaderSection(
                 lastRead = lastRead,
@@ -344,6 +350,7 @@ fun HomeScreen(
             }
         }
     }
+}
 }
 
 @Composable

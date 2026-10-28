@@ -16,11 +16,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.data.repository.ResourceState
 import com.example.ui.components.AppBottomNavigation
 import com.example.ui.components.MiniAudioPlayer
+import com.example.ui.components.QariSelectionBottomSheet
 import com.example.ui.screens.BookmarksScreen
 import com.example.ui.screens.HijriCalendarScreen
 import com.example.ui.screens.HomeScreen
@@ -70,6 +74,7 @@ class MainActivity : ComponentActivity() {
                 val todayHijri by viewModel.todayHijriDate.collectAsState()
                 val hijriMonthCalendar by viewModel.hijriMonthCalendar.collectAsState()
                 val hijriDaysGrid by viewModel.hijriDaysGrid.collectAsState()
+                var showQariSheet by remember { mutableStateOf(false) }
 
                 // Handle system back button
                 BackHandler(enabled = currentScreen !is Screen.Home) {
@@ -95,6 +100,7 @@ class MainActivity : ComponentActivity() {
                                 onTogglePlayPause = { viewModel.togglePlayPauseAudio() },
                                 onNext = { viewModel.nextAudioVerse() },
                                 onPrev = { viewModel.prevAudioVerse() },
+                                onSelectQari = { showQariSheet = true },
                                 onClose = { viewModel.stopAudio() }
                             )
 
@@ -107,6 +113,16 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
+                    if (showQariSheet) {
+                        QariSelectionBottomSheet(
+                            selectedQariId = audioState.qariId.ifEmpty { settings.selectedQariId },
+                            onSelectQari = { qari ->
+                                viewModel.changeQari(qari.id, qari.name)
+                                showQariSheet = false
+                            },
+                            onDismiss = { showQariSheet = false }
+                        )
+                    }
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
